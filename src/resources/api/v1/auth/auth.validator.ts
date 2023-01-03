@@ -7,3 +7,10 @@ export const registerRules = celebrate({
     password: Joi.string().min(2).required(),
   }),
 });
+
+export const loginRules = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(2).required(),
+  }),
+});
