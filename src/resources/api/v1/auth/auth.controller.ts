@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import 'dotenv';
+import jwt from 'jsonwebtoken';
 import jsonResponse from 'helpers/jsonResponse';
 import bcrypt from 'bcrypt';
 import asyncHandler from 'middlewares/asyncHandler';
 import User from '../../../../database/models/user';
 import * as statusCodes from '../../../../constants/statusCodes';
-import jwt from 'jsonwebtoken';
 import { comparePassword } from 'helpers/authHelper';
 
-const { SALT_ROUNDS, JWT_SECRET_KEY } = process.env;
+const { SALT_ROUNDS, JWT_KEY } = process.env;
 export const signUp = asyncHandler(async (req: Request, res: Response) => {
   const formData = req.body;
   const emailExist = await User.findOne({ where: { email: formData.email } });
@@ -23,7 +23,7 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
   formData.password = await bcrypt.hash(req.body.password, salt);
   const user = await User.create(formData);
   const data = { id: user.id, email: user.email, name: user.name };
-  const token = jwt.sign(data, JWT_SECRET_KEY || '');
+  const token = jwt.sign(data, JWT_KEY || '');
   return jsonResponse({
     res,
     status: statusCodes.CREATED,
@@ -44,7 +44,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     });
   }
   const data = { id: user?.id, email: user?.email, name: user?.name };
-  const token = jwt.sign(data, JWT_SECRET_KEY || '');
+  const token = jwt.sign(data, JWT_KEY || '');
   return jsonResponse({
     res,
     status: statusCodes.OK,
