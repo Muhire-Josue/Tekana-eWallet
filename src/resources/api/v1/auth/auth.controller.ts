@@ -53,3 +53,15 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     token,
   });
 });
+
+export const getMany = asyncHandler(async (req: Request, res: Response) => {
+  const user = await User.findAll({
+    attributes: ['id', 'name', 'email', 'created_at', 'updated_at'],
+  });
+  return jsonResponse({
+    res,
+    status: statusCodes.OK,
+    message: 'User Found!',
+    data: user,
+  });
+});
